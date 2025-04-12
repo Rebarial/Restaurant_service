@@ -1,4 +1,3 @@
 venv/
-versions/
 __pycache__
 .postgress
