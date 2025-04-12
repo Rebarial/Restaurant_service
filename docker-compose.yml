@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  app:
+    container_name: restaurant_service
+    build: ./
+    depends_on:
+      - db
+    command: "bash -c 'while !</dev/tcp/${DB_CONTAINER}/${DB_PORT2}; do sleep 1; done; alembic revision --autogenerate; alembic upgrade head; uvicorn app.main:app --host 0.0.0.0 --port 8000'"
+    volumes:
+      - ./app:/src/app
+    ports:
+      - ${APP_HOST_PORT}:8000
+    restart: "no"
+    env_file:
+      - .env
+
+  db:
+    container_name: ${DB_CONTAINER}
+    image: postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:${DB_PORT2}
+    volumes:
+      - .postgress:/var/lib/postgres/database
+    restart: always
+    env_file:
+      - .env

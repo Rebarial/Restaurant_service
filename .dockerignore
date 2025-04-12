@@ -1,0 +1,4 @@
+.dockerignore
+Dockerfile
+versions/
+.postgress
