@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   app:
@@ -6,7 +6,7 @@ services:
     build: ./
     depends_on:
       - db
-    command: "bash -c 'while !</dev/tcp/${DB_CONTAINER}/${DB_PORT2}; do sleep 1; done; alembic revision --autogenerate; alembic upgrade head; uvicorn app.main:app --host 0.0.0.0 --port 8000'"
+    command: "bash -c 'while !</dev/tcp/${DB_CONTAINER}/${DB_PORT2}; do sleep 1; done; uvicorn app.main:app --host 0.0.0.0 --port 8000'"
     volumes:
       - ./app:/src/app
     ports:
@@ -17,7 +17,7 @@ services:
 
   db:
     container_name: ${DB_CONTAINER}
-    image: postgres
+    image: postgres:15
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -25,7 +25,22 @@ services:
     ports:
       - ${DB_PORT}:${DB_PORT2}
     volumes:
-      - .postgress:/var/lib/postgres/database
+      - pgdata:/var/lib/postgresql/data
     restart: always
     env_file:
       - .env
+
+
+  migrate:
+    container_name: restaurant_migration
+    build: ./
+    depends_on:
+      - app
+    command: "bash -c 'alembic revision --autogenerate; alembic upgrade head'"
+    volumes:
+      - ./app:/src/app
+    env_file:
+      - .env
+
+volumes:
+  pgdata:
