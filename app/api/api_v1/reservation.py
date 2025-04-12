@@ -9,7 +9,7 @@ router = APIRouter(
 )
 
 @router.get("/")
-async def get_tables(
+async def get_reservations(
     session: AsyncSession = Depends(db_helper.session_getter)
     ):
     result = await reservation.get_all_reservations(session=session)
@@ -17,7 +17,7 @@ async def get_tables(
     return result
 
 @router.post("/")
-async def create_table(
+async def create_reservation(
     reservation_create: ReservationCreate,
     session: AsyncSession = Depends(db_helper.session_getter),
     ):
@@ -33,7 +33,7 @@ async def create_table(
     return result
 
 @router.delete("/")
-async def delete_table(
+async def delete_reservation(
     reservation_id: int,
     session: AsyncSession = Depends(db_helper.session_getter),
     ):
