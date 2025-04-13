@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     DB_USER: str 
     DB_PASSWORD: str 
     DB_NAME: str
-    DB_CONTAINER: str = ""
-    DB_PORT2: int = 0
+    DB_CONTAINER: str
+    DB_PORT2: int
 
     naming_conventions: dict[str, str] = {
         "ix": "ix_%(column_0_label)s",
@@ -35,12 +35,8 @@ class Settings(BaseSettings):
 
     @property
     def database_url_asyncpg(self):
-        if self.DB_CONTAINER != "":
-            if self.DB_PORT2 != 0:
-                return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_CONTAINER}:{self.DB_PORT2}/{self.DB_NAME}"
-            return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_CONTAINER}:{self.DB_PORT}/{self.DB_NAME}"
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_CONTAINER}:{self.DB_PORT2}/{self.DB_NAME}"
 
-        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     
     model_config = SettingsConfigDict(env_file=".env.app")
