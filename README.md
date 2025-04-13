@@ -16,6 +16,6 @@ git clone https://github.com/Rebarial/Restaurant_service
 
 cd Restaurant_service
 
-docker-compose up --build -d
+docker-compose up --build --force-recreate -d
 
 ``` 
